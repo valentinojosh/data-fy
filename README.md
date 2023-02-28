@@ -30,7 +30,7 @@ Under construction
 
 ## Author
 
-[Josh Valentino](https://valentinojosh.github.io/)  
+[Josh Valentino](https://joshvalentino.com)  
 
 ## Version History
 
