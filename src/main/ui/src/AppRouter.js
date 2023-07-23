@@ -9,6 +9,7 @@ import {Container, Navbar} from "react-bootstrap";
 import "./components/modal/modal.css"
 import axios from "axios";
 import Privacy from "./routerpages/Privacy";
+import Error from "./routerpages/Error";
 
 const handleLogoutButtonClick = () => {
     axios.get('http://localhost:8080/api/logout').then((res) => {
@@ -32,10 +33,10 @@ const AppRouter = () => {
                 <div className="modal-one">
                     <div onClick={toggleModal} className="overlay"/>
                     <div className="modal-content-one">
-                        <span style={{fontWeight:700}}>Logo</span>
+                        <span style={{fontWeight:700}}>Data-fy</span>
                         <br/>
                         <p>
-                            Logo is a Spotify data visualization app based on your personal account. You can customize certain parameters of the data displayed such as time range, top artists, and top songs                        </p>
+                            Data-fy is a Spotify data visualization app based on your personal account. You can customize certain parameters of the data displayed such as time range, top artists, and top songs                        </p>
                         <br/>
                         {/*<p>*/}
                         {/*    TEMP: Logo creates a music festival graphic based on your most listened-to Spotify artists. You can customize your graphic by changing the time range of your top artists, selecting a custom style, and by changing your festival's name.*/}
@@ -45,7 +46,7 @@ const AppRouter = () => {
                         {/*    TEMP: Your festival name is automatically generated from your Spotify username. If you do not want to display your username in the title, you can enable the "Hide Username" option.*/}
                         {/*</p>*/}
                         {/*<br/>*/}
-                        <p>For information on how Logo handles your profile data, please refer to our <a
+                        <p>For information on how Data-fy handles your profile data, please refer to our <a
                             className="text-blue-500 underline cursor-pointer" target="_blank" href="/privacy">Privacy
                             Policy</a>
                         </p>
@@ -73,7 +74,7 @@ const AppRouter = () => {
                                 </svg>
                             </button>
 
-                            <div className="flex-1 text-center font-['Ganache'] logo-text">Logo</div>
+                            <div className="flex-1 text-center font-['Ganache'] logo-text">Data-fy</div>
 
                             {((window.location.pathname !== "/") && (window.location.pathname !== "/privacy")) && (
                             <button className="logout-button" onClick={handleLogoutButtonClick}>
@@ -93,6 +94,7 @@ const AppRouter = () => {
                     <Route path="/" element={<Login/>} />
                     <Route path="/dash" element={<Dash/>}/>
                     <Route path="/privacy" element={<Privacy/>}/>
+                    <Route path="/error" element={<Error/>}/>
                 </Routes>
 
                 <div className="footer">

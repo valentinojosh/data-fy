@@ -70,18 +70,17 @@ public class AuthController {
         return uri.toString();
     }
 
-//    @RequestMapping("/error")
-//    public void userLogin(HttpServletResponse response) throws IOException {
-//        response.sendRedirect("http://localhost:3000");
-//    }
-
     @GetMapping("/auth/")
-    public void handleAuthCode(@RequestParam("code") String userCode, HttpServletResponse response, HttpServletRequest request) throws IOException {
+    public void handleAuthCode(@RequestParam(value = "code", required = false) String userCode, @RequestParam(value = "error", required = false) String error, HttpServletResponse response, HttpServletRequest request) throws IOException {
+
+        if (error != null) {
+            if (error.equals("access_denied")) {
+                response.sendRedirect("http://localhost:3000/error?message=" + error);
+                return;
+            }
+        }
 
         if (userCode == null || userCode.isEmpty()){
-            // Return a bad request response
-            response.sendRedirect("/");
-            //response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No code provided in request body");
             return;
         }
 

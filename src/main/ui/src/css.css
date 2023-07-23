@@ -284,3 +284,25 @@ hr.one {
 .query-selection-options > button:active{
     text-decoration: underline;
 }
+.sign-in {
+    font-weight: 400;
+    margin-bottom: 0.85rem;
+}
+.sign-in-head {
+    font-weight: 700;
+    font-size: 2.25rem;
+    line-height: 2.25rem;
+    margin-bottom: 1.5rem;
+}
+.s-green {
+    --tw-bg-opacity: 1;
+    --bs-btn-bg: rgb(34 197 94) !important;
+}
+.sign-in-policy {
+    font-weight: 350;
+    margin-top: 1rem;
+    font-size: 0.75rem;
+}
+.vh-75 {
+    height: 75vh!important;
+}
