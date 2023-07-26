@@ -1,8 +1,9 @@
-package com.github.valentinojosh.datafy;
+package com.github.valentinojosh.datafy.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
 import java.io.IOException;
 
 @ControllerAdvice

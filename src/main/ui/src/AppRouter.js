@@ -12,7 +12,7 @@ import Privacy from "./routerpages/Privacy";
 import Error from "./routerpages/Error";
 
 const handleLogoutButtonClick = () => {
-    axios.get('http://localhost:8080/api/logout').then((res) => {
+    axios.get('http://localhost:8080/api/logout', {withCredentials: true}).then((res) => {
         // Handle successful logout
         window.location.replace(res.data);
     }).catch((error) => {
@@ -51,7 +51,11 @@ const AppRouter = () => {
                             Policy</a>
                         </p>
                         <br/>
-                        <p>Made by <a target="_blank" rel="noreferrer" href="https://linktr.ee/valentinojosh" className="text-blue-500 underline">Josh Valentino</a></p>
+                        {/*<p>Made by <a target="_blank" rel="noreferrer" href="https://linktr.ee/valentinojosh" className="text-blue-500 underline">Josh Valentino</a></p>*/}
+                        <p>Back end designed, programmed, and tested by <a target="_blank" rel="noreferrer" href="https://linktr.ee/valentinojosh" className="text-blue-500 underline">Josh Valentino</a></p>
+                        <p>Front end programmed and tested by <a target="_blank" rel="noreferrer" href="https://linktr.ee/valentinojosh" className="text-blue-500 underline">Josh Valentino</a>, mimicking the design of <a target="_blank" rel="noreferrer" href="https://www.instafest.app/" className="text-blue-500 underline">InstaFest</a></p>
+
+
                         <div className="flex justify-center">
                             <button className="close-modal" onClick={toggleModal}>
                                 Close

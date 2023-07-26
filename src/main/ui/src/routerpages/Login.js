@@ -3,10 +3,6 @@ import { Container } from "react-bootstrap"
 import axios from "axios";
 import Table from "./Table";
 
-//here i can change the redirect to a different url which will route to a different router page
-//need to get scope out of here possible later
-//const AUTH_URL= "https://accounts.spotify.com/authorize?client_id=1b24d7a17fea44f59005605f6cb96cf2&response_type=code&redirect_uri=http://localhost:3000/&scope=streaming%20user-read-email%20user-read-private%20user-library-read%20user-library-modify%20user-read-playback-state%20user-modify-playback-state"
-
 const handleLoginButtonClick = () => {
     axios.get('http://localhost:8080/api/login').then((res) => {
         // Handle successful login
@@ -17,12 +13,10 @@ const handleLoginButtonClick = () => {
             window.location.replace('/error?message=' + encodeURIComponent(error.response.data.message));
         } else if (error.request) {
             // The request was made but no response was received
-            window.location.replace('/error?message=' + encodeURIComponent(error.request));
-            console.log(error.request);
+            window.location = "/error?message=Server is down";
         } else {
             // Something happened in setting up the request that triggered an Error
             window.location.replace('/error?message=' + encodeURIComponent(error.message));
-            console.log('Error', error.message);
         }
     });
 }

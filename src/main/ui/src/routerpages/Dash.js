@@ -6,6 +6,7 @@ export default function Dash() {
     const [artists, setArtists] = useState([])
     const [genres, setGenres] = useState([])
     const [dataSelection, setDataSelection] = useState('btngenres')
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     const handleDataSelection = (id) => {
         setDataSelection(id);
@@ -27,9 +28,37 @@ export default function Dash() {
             })
     },[])
 
+    //use effect to get base data data upon initial load
+    //mighte need to check timing on this as the data might not be ready by the time of redirect?
+    // useEffect(() => {
+    //     axios
+    //         .get("http://localhost:8080/api/data", { withCredentials: true })
+    //         .then(res => {
+    //             console.log(res.data)
+    //         })
+    //         .catch((error) => {
+    //             console.log("error in getting base data - use effect TempDash")
+    //             console.error(error)
+    //         })
+    // },[])
+
+    useEffect(() => {
+        axios
+            .post("http://localhost:8080/api/data", {},{ withCredentials: true })
+            .then(() => {
+                setIsAuthenticated(true);
+                // Successfully sent the request, no need to do anything with the response.
+            })
+            .catch((error) => {
+                console.log("error in getting base data - use effect TempDash")
+                console.error(error)
+            })
+    },[])
+
     //use effect to get top five data upon initial load
     //mighte need to check timing on this as the data might not be ready by the time of redirect?
     useEffect(() => {
+        if(isAuthenticated) {
         axios
             .get("http://localhost:8080/api/topfive")
             .then(res => {
@@ -40,11 +69,13 @@ export default function Dash() {
                 console.log("error in getting top five - use effect TempDash")
                 console.error(error)
             })
-    },[])
+        }
+    },[isAuthenticated])
 
     //use effect to get top genres data upon initial load
     //mighte need to check timing on this as the data might not be ready by the time of redirect?
     useEffect(() => {
+        if (isAuthenticated){
         axios
             .get("http://localhost:8080/api/genres")
             .then(res => {
@@ -55,7 +86,8 @@ export default function Dash() {
                 console.log("error in getting genres - use effect Dash")
                 console.error(error)
             })
-    },[])
+        }
+    },[isAuthenticated])
 
     return  (
         <div>
