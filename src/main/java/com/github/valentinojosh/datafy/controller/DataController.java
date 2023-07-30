@@ -14,6 +14,7 @@ import se.michaelthelin.spotify.model_objects.specification.*;
 import se.michaelthelin.spotify.requests.data.artists.GetSeveralArtistsRequest;
 import se.michaelthelin.spotify.requests.data.browse.GetRecommendationsRequest;
 import se.michaelthelin.spotify.requests.data.personalization.simplified.GetUsersTopArtistsRequest;
+import se.michaelthelin.spotify.requests.data.personalization.simplified.GetUsersTopTracksRequest;
 import se.michaelthelin.spotify.requests.data.player.GetCurrentUsersRecentlyPlayedTracksRequest;
 
 import java.io.IOException;
@@ -31,9 +32,6 @@ public class DataController {
     private static final URI redirectUri = SpotifyHttpManager.makeUri(uri);
 
     private final SpotifyData sd = new SpotifyData();
-    //private Track[] tracksShort;
-    //private Track[] tracksMedium;
-    //private Track[] tracksLong;
 
     private static final SpotifyApi spotifyApi = new SpotifyApi.Builder()
             .setClientId(clientId)
@@ -41,14 +39,9 @@ public class DataController {
             .setRedirectUri(redirectUri)
             .build();
 
-    @GetMapping("/topfive")
-    public Artist[] handleTopFive() throws IOException {
-        return sd.getArtistsShort();
-    }
-
-    @GetMapping("/genres")
-    public Map<String, Integer> handleGenre() throws IOException {
-        return sd.getTopSixGenres();
+    @GetMapping("/objectdata")
+    public SpotifyData handleObjectData() throws IOException {
+        return sd;
     }
 
     @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
@@ -63,6 +56,7 @@ public class DataController {
         getTopArtists();
         getTotalMinutes();
         getTopGenres();
+        getTopTracks();
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -143,27 +137,21 @@ public class DataController {
                 String[] genre = currentArtist.getGenres();
                 for(String currentGenre : genre){
                     if (genres.containsKey(currentGenre)) {
-                        //If present, add 4
                         genres.put(currentGenre, (genres.get(currentGenre) + 4));
                     } else {
-                        //If not present, add it with value of 4
                         genres.put(currentGenre, 4);
                     }
                 }
             }
 
-            //the genres sourced from the top artists are weighted more heavily
-            //im thinking maybe increasing the difference even more considering recent songs will change more than recent plays
-            //maybe do a +8 vs +3?
+            //genres sourced from top artists weighted more heavily than top songs
             for(Artist currentArtist : sd.getArtistsLongTotal()){
                 String[] genre = currentArtist.getGenres();
                 for(String currentGenre : genre){
                     if (genres.containsKey(currentGenre)) {
-                        //If present, add 6
-                        genres.put(currentGenre, genres.get(currentGenre) + 6);
+                        genres.put(currentGenre, genres.get(currentGenre) + 8);
                     } else {
-                        //If not present, add it with value of 6
-                        genres.put(currentGenre, 6);
+                        genres.put(currentGenre, 8);
                     }
                 }
             }
@@ -188,6 +176,32 @@ public class DataController {
             System.out.println("Error getting top genres: " + e.getMessage());
         }
 
+    }
+
+    private void getTopTracks() {
+        //System.out.println("Here we have made it to the getSpotifyData method");
+        final GetUsersTopTracksRequest getUsersTopTracksRequestShort = spotifyApi.getUsersTopTracks()
+                .time_range("short_term")
+                .limit(5)
+                .build();
+
+        final  GetUsersTopTracksRequest getUsersTopTracksRequestMedium = spotifyApi.getUsersTopTracks()
+                .time_range("medium_term")
+                .limit(5)
+                .build();
+
+        final  GetUsersTopTracksRequest getUsersTopTracksRequestLong = spotifyApi.getUsersTopTracks()
+                .time_range("long_term")
+                .limit(5)
+                .build();
+
+        try{
+            sd.setTracksShort(getUsersTopTracksRequestShort.execute().getItems());
+            sd.setTracksMedium(getUsersTopTracksRequestMedium.execute().getItems());
+            sd.setTracksLong(getUsersTopTracksRequestLong.execute().getItems());
+        } catch (Exception e){
+            System.out.println("Error getting top tracks: " + e.getMessage());
+        }
     }
 
     private void getTotalMinutes() {

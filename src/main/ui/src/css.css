@@ -2,7 +2,10 @@
     box-sizing: border-box;
     border: 0 solid #e5e7eb;
 }
-
+table img {
+    max-width: 100px;
+    max-height: 100px;
+}
 .container {
     width: 100%
 }
@@ -231,6 +234,10 @@ hr.one {
         text-align: center;
         margin-right: 1.5rem;
     }
+    table img {
+        max-width: 150px;
+        max-height: 150px;
+    }
 }
 @media (min-width: 768px) {
     .options-container{
@@ -245,6 +252,12 @@ hr.one {
     .options-container{
         margin-left: 35px;
         margin-top: 0;
+    }
+}
+@media (min-width: 1900px) {
+    table img {
+        max-width: 180px;
+        max-height: 180px;
     }
 }
 .customize{

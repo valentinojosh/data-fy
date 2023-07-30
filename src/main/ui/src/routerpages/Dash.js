@@ -1,15 +1,34 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
-import Table from "./Table";
+import ArtistTable from "./ArtistTable";
+import GTable from "./GTable";
+import Genres from "./Genres";
+import TrackTable from "./TrackTable";
 
 export default function Dash() {
+    const [objectData, setObjectData] = useState([])
     const [artists, setArtists] = useState([])
     const [genres, setGenres] = useState([])
+    const [tracks, setTracks] = useState([])
     const [dataSelection, setDataSelection] = useState('btngenres')
+    const [artistSelection, setArtistSelection] = useState('Short')
+    const [trackSelection, setTrackSelection] = useState('Short')
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     const handleDataSelection = (id) => {
         setDataSelection(id);
+    }
+
+    const handleArtistSelection = (id) => {
+        let arrayName = `artists${id}`;
+        setArtistSelection(id);
+        setArtists(objectData[arrayName]);
+    }
+
+    const handleTrackSelection = (id) => {
+        let arrayName = `tracks${id}`;
+        setTrackSelection(id);
+        setTracks(objectData[arrayName]);
     }
 
     //use effect to keep out of dash if not logged in
@@ -20,27 +39,11 @@ export default function Dash() {
                 if(res.data){
                     window.location = "/"
                 }
-                console.log(res.data)
-                //When we hit here trigger another get to get the dash information?
             })
             .catch(() => {
                 window.location = "/"
             })
     },[])
-
-    //use effect to get base data data upon initial load
-    //mighte need to check timing on this as the data might not be ready by the time of redirect?
-    // useEffect(() => {
-    //     axios
-    //         .get("http://localhost:8080/api/data", { withCredentials: true })
-    //         .then(res => {
-    //             console.log(res.data)
-    //         })
-    //         .catch((error) => {
-    //             console.log("error in getting base data - use effect TempDash")
-    //             console.error(error)
-    //         })
-    // },[])
 
     useEffect(() => {
         axios
@@ -55,37 +58,23 @@ export default function Dash() {
             })
     },[])
 
-    //use effect to get top five data upon initial load
+    //use effect to get spotify object data upon initial load
     //mighte need to check timing on this as the data might not be ready by the time of redirect?
     useEffect(() => {
         if(isAuthenticated) {
-        axios
-            .get("http://localhost:8080/api/topfive")
-            .then(res => {
-                console.log(res.data)
-                setArtists(res.data)
-            })
-            .catch((error) => {
-                console.log("error in getting top five - use effect TempDash")
-                console.error(error)
-            })
-        }
-    },[isAuthenticated])
-
-    //use effect to get top genres data upon initial load
-    //mighte need to check timing on this as the data might not be ready by the time of redirect?
-    useEffect(() => {
-        if (isAuthenticated){
-        axios
-            .get("http://localhost:8080/api/genres")
-            .then(res => {
-                console.log(res.data)
-                setGenres(res.data)
-            })
-            .catch((error) => {
-                console.log("error in getting genres - use effect Dash")
-                console.error(error)
-            })
+            axios
+                .get("http://localhost:8080/api/objectdata")
+                .then(res => {
+                    console.log(res.data)
+                    setObjectData(res.data)
+                    setArtists(res.data['artistsShort'])
+                    setGenres(res.data['topSixGenres'])
+                    setTracks(res.data['tracksShort'])
+                })
+                .catch((error) => {
+                    console.log("error in getting object data - use effect TempDash")
+                    console.error(error)
+                })
         }
     },[isAuthenticated])
 
@@ -93,9 +82,10 @@ export default function Dash() {
         <div>
                 <div className="content-container">
                     <div className="left-content">
-                        <div>Top 5:</div>
-                        {dataSelection === 'btnartists' ? <Table data={artists}/> : dataSelection === 'btngenres' ? <div>genres:</div> : <div></div>}
-
+                        {dataSelection === 'btnartists' ? <ArtistTable data={artists}/> :
+                            dataSelection === 'btngenres' ? <GTable data={genres}/> :
+                                dataSelection === 'btnsongs' ? <TrackTable data={tracks}/> :
+                                    <Genres data={genres}/>}
                     </div>
                     <div className="right-content">
                         <div className="options-container">
@@ -121,16 +111,41 @@ export default function Dash() {
                                         Wrapped</button>
                                 </div>
                             </div>
+                            {dataSelection === 'btnartists' ?
                             <div className="query-selection">
                                 <div className="query-selection-header">
                                     Include top artists from
                                 </div>
                                 <div className="query-selection-options">
-                                    <button>Last 4 weeks</button>
-                                    <button>Last 6 months</button>
-                                    <button>Last All Time</button>
+                                    <button id='Short' style={{textDecoration: artistSelection === 'Short' ? 'underline' : 'none'}}
+                                            onClick={() => handleArtistSelection('Short')}>
+                                        Last 4 weeks</button>
+                                    <button id='Medium' style={{textDecoration: artistSelection === 'Medium' ? 'underline' : 'none'}}
+                                            onClick={() => handleArtistSelection('Medium')}>
+                                        Last 6 months</button>
+                                    <button id='Long' style={{textDecoration: artistSelection === 'Long' ? 'underline' : 'none'}}
+                                            onClick={() => handleArtistSelection('Long')}>
+                                        All Time</button>
                                 </div>
-                            </div>
+                            </div> :
+                                dataSelection === 'btnsongs' ?
+                                    <div className="query-selection">
+                                        <div className="query-selection-header">
+                                            Include top artists from
+                                        </div>
+                                        <div className="query-selection-options">
+                                            <button id='Short' style={{textDecoration: trackSelection === 'Short' ? 'underline' : 'none'}}
+                                                    onClick={() => handleTrackSelection('Short')}>
+                                                Last 4 weeks</button>
+                                            <button id='Medium' style={{textDecoration: trackSelection === 'Medium' ? 'underline' : 'none'}}
+                                                    onClick={() => handleTrackSelection('Medium')}>
+                                                Last 6 months</button>
+                                            <button id='Long' style={{textDecoration: trackSelection === 'Long' ? 'underline' : 'none'}}
+                                                    onClick={() => handleTrackSelection('Long')}>
+                                                All Time</button>
+                                        </div>
+                                    </div> :
+                                    <div/>}
                         </div>
                     </div>
                 </div>

@@ -1,7 +1,6 @@
 import React from 'react'
 import { Container } from "react-bootstrap"
 import axios from "axios";
-import Table from "./Table";
 
 const handleLoginButtonClick = () => {
     axios.get('http://localhost:8080/api/login').then((res) => {
