@@ -3,8 +3,26 @@
     border: 0 solid #e5e7eb;
 }
 table img {
-    max-width: 100px;
     max-height: 100px;
+}
+.imageCell {
+    text-align: left; /* Align images to the left */
+    width: 1%; /* Minimal width so that the images take as less space as possible */
+    white-space: nowrap; /* Prevents cell content from wrapping into multiple lines */
+}
+.textCell {
+    text-align: left; /* Align text to the left */
+    padding-left: 1rem; /* Space between image and text */
+}
+@media (min-width: 950px) {
+    .textCell {
+        padding-left: 5rem; /* Space between image and text */
+    }
+}
+@media (min-width: 1300px) {
+    .textCell {
+        padding-left: 10rem; /* Space between image and text */
+    }
 }
 .container {
     width: 100%
@@ -175,9 +193,26 @@ hr.one {
     display: flex;
 }
 
+.loading-container{
+    padding: 1.25rem;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+    width: 100%;
+    min-height: 96vh;
+    display: flex;
+}
+
 @media (min-width: 640px) {
     .content-container {
         padding: 2.5rem;
+        flex-direction: row;
+    }
+    .loading-container {
+        padding: 2.5rem;
+        justify-content: center;
+        align-items: center;
         flex-direction: row;
     }
     .right-content{
@@ -235,8 +270,7 @@ hr.one {
         margin-right: 1.5rem;
     }
     table img {
-        max-width: 150px;
-        max-height: 150px;
+        max-height: 120px;
     }
 }
 @media (min-width: 768px) {
@@ -256,8 +290,7 @@ hr.one {
 }
 @media (min-width: 1900px) {
     table img {
-        max-width: 180px;
-        max-height: 180px;
+        max-height: 120px;
     }
 }
 .customize{

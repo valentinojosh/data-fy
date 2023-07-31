@@ -21,13 +21,9 @@ import java.net.URI;
 @CrossOrigin()
 public class AuthController {
 
-    //Current idea: get code -> directly fire off access token query, -> directly get 5+ queries for data wanted
-    //Then store that data in https session. This way the front end can grab it and display it, and aftet 30-60 min
-    //the data would expire with the session
-
     //Each user should get their own instance of the controller
     //For sensitive data I could use encrypted cookies or secure database.
-    // Database would be something I am more familiar with, plus its less web dev-y
+    //Database would be something I am more familiar with, plus its less web dev-y
     //This project is not meant to show suberb web dev skills, it is to show general ability in Java, React, Frameworks, REST, etc.
 
     private static final String clientId = Dotenv.load().get("CLIENT_ID");
@@ -47,7 +43,7 @@ public class AuthController {
     @ResponseBody
     public String userLogin(){
         AuthorizationCodeUriRequest authorizationCodeUriRequest = spotifyApi.authorizationCodeUri()
-                .scope("user-read-private, user-read-email, user-top-read, user-library-read, user-read-recently-played")
+                .scope("user-top-read, user-library-read, user-read-recently-played")
                 .show_dialog(true)
                 .build();
         final URI uri = authorizationCodeUriRequest.execute();
@@ -68,7 +64,6 @@ public class AuthController {
             return;
         }
 
-        //Can make a future function here for multithread purpose. this way the redirect always happens first
         getTokens(userCode , session);
 
         code = "0";

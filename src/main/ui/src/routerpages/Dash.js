@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from "react";
 import axios from "axios";
 import ArtistTable from "./ArtistTable";
-import GTable from "./GTable";
 import Genres from "./Genres";
 import TrackTable from "./TrackTable";
 
@@ -50,7 +49,6 @@ export default function Dash() {
             .post("http://localhost:8080/api/data", {},{ withCredentials: true })
             .then(() => {
                 setIsAuthenticated(true);
-                // Successfully sent the request, no need to do anything with the response.
             })
             .catch((error) => {
                 console.log("error in getting base data - use effect TempDash")
@@ -80,12 +78,14 @@ export default function Dash() {
 
     return  (
         <div>
+            {genres.length === 0 ?
+                <div className="loading-container"><div className="customize">Loading...</div></div>:
                 <div className="content-container">
                     <div className="left-content">
                         {dataSelection === 'btnartists' ? <ArtistTable data={artists}/> :
-                            dataSelection === 'btngenres' ? <GTable data={genres}/> :
+                            dataSelection === 'btngenres' ? <Genres data={genres}/> :
                                 dataSelection === 'btnsongs' ? <TrackTable data={tracks}/> :
-                                    <Genres data={genres}/>}
+                                    <div>Work in progress</div>}
                     </div>
                     <div className="right-content">
                         <div className="options-container">
@@ -148,7 +148,7 @@ export default function Dash() {
                                     <div/>}
                         </div>
                     </div>
-                </div>
+                </div>}
         </div>
     )
 }

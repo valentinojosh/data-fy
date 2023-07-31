@@ -10,8 +10,8 @@ const TrackTable = (props) => {
                         border: "1px solid black",
                         backgroundColor: index % 2 === 0 ? "lightgrey" : "white"
                     }}>
-                    <td>{item.album.images && item.album.images.length > 0 && <img src={item.album.images[0].url} alt={item.name}/>}</td>
-                    <td>{index+1}. {item.name}</td>
+                    <td className="imageCell">{item.album.images && item.album.images.length > 0 && <img src={item.album.images[0].url} alt={item.name}/>}</td>
+                    <td className="textCell">{index+1}. {item.name}</td>
                 </tr>
             ))}
             </tbody>
