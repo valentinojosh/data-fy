@@ -14,6 +14,8 @@ import Error from "./routerpages/Error";
 const handleLogoutButtonClick = () => {
     axios.get('http://localhost:8080/api/logout', {withCredentials: true}).then((res) => {
         // Handle successful logout
+        sessionStorage.clear();
+        localStorage.clear();
         window.location.replace(res.data);
     }).catch((error) => {
         // Handle login error

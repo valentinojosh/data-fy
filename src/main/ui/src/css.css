@@ -10,6 +10,10 @@ table img {
     width: 1%; /* Minimal width so that the images take as less space as possible */
     white-space: nowrap; /* Prevents cell content from wrapping into multiple lines */
 }
+.imageCell2 {
+    width: 1%; /* Minimal width so that the images take as less space as possible */
+    white-space: nowrap; /* Prevents cell content from wrapping into multiple lines */
+}
 .textCell {
     text-align: left; /* Align text to the left */
     padding-left: 1rem; /* Space between image and text */
@@ -204,7 +208,7 @@ hr.one {
     display: flex;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 765px) {
     .content-container {
         padding: 2.5rem;
         flex-direction: row;
@@ -248,6 +252,11 @@ hr.one {
     flex-direction: column;
     margin-left: 0;
     margin-top: 1.5rem;
+}
+@media (max-width: 700px) {
+    table img {
+        max-height: 54px;
+    }
 }
 @media (min-width: 640px) {
     .options-container{

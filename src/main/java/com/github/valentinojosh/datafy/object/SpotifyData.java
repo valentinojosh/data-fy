@@ -1,9 +1,6 @@
 package com.github.valentinojosh.datafy.object;
 
-import se.michaelthelin.spotify.model_objects.specification.Artist;
-import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
-import se.michaelthelin.spotify.model_objects.specification.PlayHistory;
-import se.michaelthelin.spotify.model_objects.specification.Track;
+import se.michaelthelin.spotify.model_objects.specification.*;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -21,6 +18,9 @@ public class SpotifyData {
     private Track[] tracksShort;
     private Track[] tracksMedium;
     private Track[] tracksLong;
+    private Track[] recommendations;
+    private float minutes;
+
 
     public SpotifyData(){
         // No-argument constructor
@@ -112,5 +112,21 @@ public class SpotifyData {
 
     public void setTracksLong(Track[] tracksLong) {
         this.tracksLong = tracksLong;
+    }
+
+    public Track[] getRecommendations() {
+        return recommendations;
+    }
+
+    public void setRecommendations(Track[] recommendations) {
+        this.recommendations = recommendations;
+    }
+
+    public float getMinutes() {
+        return minutes;
+    }
+
+    public void setMinutes(float minutes) {
+        this.minutes = minutes;
     }
 }

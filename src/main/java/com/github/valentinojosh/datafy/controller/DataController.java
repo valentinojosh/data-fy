@@ -2,6 +2,7 @@ package com.github.valentinojosh.datafy.controller;
 
 import com.github.valentinojosh.datafy.object.SpotifyData;
 import io.github.cdimascio.dotenv.Dotenv;
+import jakarta.annotation.PreDestroy;
 import jakarta.servlet.http.HttpSession;
 import org.apache.hc.core5.http.ParseException;
 import org.springframework.http.HttpStatus;
@@ -16,10 +17,14 @@ import se.michaelthelin.spotify.requests.data.browse.GetRecommendationsRequest;
 import se.michaelthelin.spotify.requests.data.personalization.simplified.GetUsersTopArtistsRequest;
 import se.michaelthelin.spotify.requests.data.personalization.simplified.GetUsersTopTracksRequest;
 import se.michaelthelin.spotify.requests.data.player.GetCurrentUsersRecentlyPlayedTracksRequest;
+import se.michaelthelin.spotify.requests.data.tracks.GetSeveralTracksRequest;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 @RestController
@@ -32,6 +37,8 @@ public class DataController {
     private static final URI redirectUri = SpotifyHttpManager.makeUri(uri);
 
     private final SpotifyData sd = new SpotifyData();
+    private int initialX = 0;
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     private static final SpotifyApi spotifyApi = new SpotifyApi.Builder()
             .setClientId(clientId)
@@ -44,6 +51,11 @@ public class DataController {
         return sd;
     }
 
+    @PreDestroy
+    public void onDestroy() {
+        executorService.shutdown();  // Gracefully shut down the executor service
+    }
+
     @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
     @PostMapping("/data")
     public ResponseEntity<Void> getData(HttpSession session) {
@@ -53,17 +65,40 @@ public class DataController {
         spotifyApi.setAccessToken(accessToken);
         spotifyApi.setRefreshToken(refreshToken);
 
+        //Invoke separate thread for getting minutes as it is a recursive call and takes the longest of all the methods
+        Future<?> future = executorService.submit(() -> {
+            sd.setMinutes(0);
+            initialX = 0;
+            getTotalMinutes(initialX);
+
+            // Ms/60000 = Minutes per week * 52 weeks in a year = est minutes per year
+            sd.setMinutes((sd.getMinutes()/60000)*52);
+        });
+
         getTopArtists();
-        getTotalMinutes();
         getTopGenres();
         getTopTracks();
+        getSpotifyDataRec(sd);
+
+        try {
+            future.get();  // this will block until the submitted task is complete
+        } catch (Exception e) {
+            // Handle any exception thrown during the execution of the task
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+//        sd.setMinutes(0);
+//        initialX = 0;
+//        getTotalMinutes(initialX);
+//
+//        // Ms/60000 = Minutes per week * 52 weeks in a year = est minutes per year
+//        sd.setMinutes((sd.getMinutes()/60000)*52);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
     private void getTopArtists() {
-        //System.out.println("Here we have made it to the getSpotifyData method");
         final GetUsersTopArtistsRequest getUsersTopArtistsRequestShort = spotifyApi.getUsersTopArtists()
                 .time_range("short_term")
                 .limit(5)
@@ -95,9 +130,8 @@ public class DataController {
     }
 
     private void getTopGenres() {
-        //Start by grabbing max limit top artists. then populate through hashmap by genre. weigh these more heavily then max limit of recents // +28 each?
-        //Next get the max limit of most recent tracks played. add into the same previous hashmap by genre // +4 each?
-        //NEED TO: translate recent tracks into artists and their genres
+        //Start by grabbing max limit top artists. then populate through hashmap by genre. weigh these more heavily then max limit of recents
+        //Next get the max limit of most recent tracks played. add into the same previous hashmap by genre
         final GetCurrentUsersRecentlyPlayedTracksRequest getCurrentUsersRecentlyPlayedTracksRequest = spotifyApi.getCurrentUsersRecentlyPlayedTracks()
                 .limit(50)
                 .build();
@@ -179,7 +213,6 @@ public class DataController {
     }
 
     private void getTopTracks() {
-        //System.out.println("Here we have made it to the getSpotifyData method");
         final GetUsersTopTracksRequest getUsersTopTracksRequestShort = spotifyApi.getUsersTopTracks()
                 .time_range("short_term")
                 .limit(5)
@@ -204,25 +237,69 @@ public class DataController {
         }
     }
 
-    private void getTotalMinutes() {
-        //posisbly impossible lol. or could do in a jank way that only does the past week or less
-        //could do minutes based upon 1 week of listening. for the full year that would be 1 week of recent tracks added up
-        //might need to do less than 1 week. maybe based off one day?
+    private void getTotalMinutes(int x) {
+        //350 tracks is one week assuming maximal listening, capping the track search there
+        if(initialX >= 350){
+            return;
+        }
+
+        final GetUsersTopTracksRequest getUsersTopTracksRequestOne = spotifyApi.getUsersTopTracks()
+                .time_range("long_term")
+                .limit(50)
+                .offset(x)
+                .build();
+        try{
+            final Track[] one = getUsersTopTracksRequestOne.execute().getItems();
+
+            for(Track t : one){
+                sd.setMinutes(sd.getMinutes()+t.getDurationMs());
+            }
+
+            if(one.length % 50 == 0 & one.length > 0){
+                initialX += 50;
+                getTotalMinutes(one.length-1);
+            }
+        } catch (Exception e){
+            System.out.println("Error getting top tracks: " + e.getMessage());
+        }
     }
 
-    private void getSpotifyDataRec() {
-        //to make this work need to pass the 3 required variables from the aritst/song bla bla. could be cool aspect. but would need tracks first
-        //aka this is an aspect to finish later
+    private void getSpotifyDataRec(SpotifyData obj) {
+        List<String> trackIds = new ArrayList<>();
+        for(Track t : obj.getTracksShort()){
+            trackIds.add(t.getId());
+        }
+        String trackSeeds = String.join(",", trackIds);
+
         final GetRecommendationsRequest getRecommendationsRequest = spotifyApi.getRecommendations()
+                .seed_tracks(trackSeeds)
+                .limit(5)
                 .build();
 
         try {
+            //Get Recommendations
             final Recommendations recommendations = getRecommendationsRequest.execute();
 
-            System.out.println("Length: " + recommendations.getTracks().length);
+            //Translate Recommendation tracks (simplified) to normal tracks
+            List<String> recTrackIds = new ArrayList<>();
+            for(TrackSimplified ts : recommendations.getTracks()){
+                recTrackIds.add(ts.getId());
+            }
+            String recTrackSeeds = String.join(",", recTrackIds);
+            final GetSeveralTracksRequest getSeveralTracksRequest = spotifyApi.getSeveralTracks(recTrackSeeds)
+                    .build();
+
+            try{
+                sd.setRecommendations(getSeveralTracksRequest.execute());
+            }
+            catch (IOException | SpotifyWebApiException | ParseException e) {
+                System.out.println("Error: " + e.getMessage());
+            }
+
         } catch (IOException | SpotifyWebApiException | ParseException e) {
             System.out.println("Error: " + e.getMessage());
         }
+
     }
 
 }

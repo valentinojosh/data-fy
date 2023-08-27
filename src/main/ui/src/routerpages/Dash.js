@@ -3,15 +3,18 @@ import axios from "axios";
 import ArtistTable from "./ArtistTable";
 import Genres from "./Genres";
 import TrackTable from "./TrackTable";
+import Wrapped from "./Wrapped";
 
 export default function Dash() {
-    const [objectData, setObjectData] = useState([])
-    const [artists, setArtists] = useState([])
-    const [genres, setGenres] = useState([])
-    const [tracks, setTracks] = useState([])
-    const [dataSelection, setDataSelection] = useState('btngenres')
-    const [artistSelection, setArtistSelection] = useState('Short')
-    const [trackSelection, setTrackSelection] = useState('Short')
+    const [objectData, setObjectData] = useState([]);
+    const [artists, setArtists] = useState([]);
+    const [genres, setGenres] = useState([]);
+    const [tracks, setTracks] = useState([]);
+    const [recommendations, setRecommendations] = useState([]);
+    const [dataSelection, setDataSelection] = useState('btngenres');
+    const [artistSelection, setArtistSelection] = useState('Short');
+    const [trackSelection, setTrackSelection] = useState('Short');
+    const [minutes, setMinutes] = useState(0);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     const handleDataSelection = (id) => {
@@ -30,6 +33,15 @@ export default function Dash() {
         setTracks(objectData[arrayName]);
     }
 
+    const handleObjectData = (data) => {
+        setObjectData(data)
+        setArtists(data['artistsShort'])
+        setGenres(data['topSixGenres'])
+        setTracks(data['tracksShort'])
+        setRecommendations(data['recommendations'])
+        setMinutes(data['minutes'])
+    }
+
     //use effect to keep out of dash if not logged in
     useEffect(() => {
         axios
@@ -45,34 +57,43 @@ export default function Dash() {
     },[])
 
     useEffect(() => {
+        if(sessionStorage.getItem("objectData") == null){
         axios
             .post("http://localhost:8080/api/data", {},{ withCredentials: true })
             .then(() => {
                 setIsAuthenticated(true);
+                sessionStorage.setItem("authStatus", "set");
             })
             .catch((error) => {
-                console.log("error in getting base data - use effect TempDash")
+                console.log("error in getting base data - use effect Dash")
                 console.error(error)
             })
+        }
+        else if (sessionStorage.getItem("authStatus") === "set"){
+            setIsAuthenticated(true);
+        }
     },[])
 
     //use effect to get spotify object data upon initial load
     //mighte need to check timing on this as the data might not be ready by the time of redirect?
     useEffect(() => {
-        if(isAuthenticated) {
+        if(isAuthenticated && sessionStorage.getItem("objectData") == null) {
             axios
                 .get("http://localhost:8080/api/objectdata")
                 .then(res => {
+                    sessionStorage.setItem("objectData", JSON.stringify(res.data));
                     console.log(res.data)
-                    setObjectData(res.data)
-                    setArtists(res.data['artistsShort'])
-                    setGenres(res.data['topSixGenres'])
-                    setTracks(res.data['tracksShort'])
+                    handleObjectData(res.data);
                 })
                 .catch((error) => {
                     console.log("error in getting object data - use effect TempDash")
                     console.error(error)
                 })
+        }
+        else if (isAuthenticated && sessionStorage.getItem("objectData") != null){
+            const data = JSON.parse(sessionStorage.getItem("objectData"));
+            console.log(data);
+            handleObjectData(data);
         }
     },[isAuthenticated])
 
@@ -85,7 +106,7 @@ export default function Dash() {
                         {dataSelection === 'btnartists' ? <ArtistTable data={artists}/> :
                             dataSelection === 'btngenres' ? <Genres data={genres}/> :
                                 dataSelection === 'btnsongs' ? <TrackTable data={tracks}/> :
-                                    <div>Work in progress</div>}
+                                    <Wrapped artists={artists} tracks={recommendations} minutes={minutes}/>}
                     </div>
                     <div className="right-content">
                         <div className="options-container">

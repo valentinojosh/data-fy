@@ -10,7 +10,8 @@ const ArtistTable = (props) => {
                         border: "1px solid black",
                         backgroundColor: index % 2 === 0 ? "lightgrey" : "white"
                     }}>
-                    <td className="imageCell">{item.images && item.images.length > 0 && <img src={item.images[0].url} alt={item.name}/>}</td>
+                    <td className="imageCell">{item.images && item.images.length > 0 && <a target="_blank" rel="noreferrer" href={item.externalUrls.externalUrls.spotify}><img src={item.images[0].url} alt={item.name}/></a>
+                    }</td>
                     <td className="textCell">{index+1}. {item.name}</td>
                 </tr>
             ))}
