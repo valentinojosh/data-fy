@@ -34,5 +34,7 @@ Under construction
 
 ## Version History
 
-* 0
-    * Under Construction
+* 1.0.0
+    * Base release version
+* 1.1.0
+    * Current WIP
