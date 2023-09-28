@@ -1,6 +1,6 @@
  # Overview
 
-Full stack web application utilizing React, Java, Sprint Boot, Maven, JGit, REST architecture, Docker and the Spotify API
+Java/React full-stack app, analyzes Spotify listening history. MVC design pattern. Managed with maven, utilizing Spring Boot, JGit, REST architecture, the Spotify API, and build tested with Docker.
 
 ## Description
 
