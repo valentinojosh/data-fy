@@ -1,10 +1,20 @@
  # Overview
 
-Spotify Wrapepd Mock. Java, Sprint Boot, JGit, REST architecture, and the Spotify API
+Full stack web application utilizing React, Java, Sprint Boot, Maven, JGit, REST architecture, Docker and the Spotify API
 
 ## Description
 
-Under construction
+**Data-fy** is a full-stack web application designed to analyze a user's Spotify listening history and present it in engaging and informative ways. The backend interfaces with Spotify via API calls, processes the returned data, and subsequently provides the processed data to the front end through RESTful routes.
+
+At its core, the backend leverages Java and adheres to the MVC design pattern. All pertinent data is collated into a single object, SpotifyData, serving as the model. This object encapsulates all necessary information, making it readily available for the frontend, which acts as the view.
+
+The backend is structured around three primary controllers:
+
+* Auth Controller: Manages the reception, verification, and local session storage of Spotify login credentials.
+
+* Data Controller: Accesses the stored session login credentials to make requests to the Spotify API. It fetches the requisite data and transforms it into insightful and intriguing content for the user. To enhance performance, especially with larger datasets, this controller employs multi-threading, allowing simultaneous processing of multiple data segments.
+
+* Global Exception Controller: Provides a centralized error handling mechanism. It captures exceptions across all controllers and conveys the associated error messages to the frontend, ensuring the user remains informed.
 
 ## Getting Started
 
