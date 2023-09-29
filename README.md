@@ -2,6 +2,8 @@
 
 Java/React full-stack app, analyzes Spotify listening history. MVC design pattern. Managed with maven, utilizing Spring Boot, JGit, REST architecture, the Spotify API, and build tested with Docker.
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/1f537465-137b-44a5-860e-50a5a3cbad36/deploy-status)](https://app.netlify.com/sites/data-fy/deploys)
+
 ## Description
 
 **Data-fy** is a full-stack web application designed to analyze a user's Spotify listening history and present it in engaging and informative ways. The backend interfaces with Spotify via API calls, processes the returned data, and subsequently provides the processed data to the front end through RESTful routes.
