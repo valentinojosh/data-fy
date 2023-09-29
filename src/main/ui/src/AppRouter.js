@@ -10,9 +10,10 @@ import "./components/modal/modal.css"
 import axios from "axios";
 import Privacy from "./routerpages/Privacy";
 import Error from "./routerpages/Error";
+const URL = process.env.REACT_APP_URL;
 
 const handleLogoutButtonClick = () => {
-    axios.get('http://localhost:8080/api/logout', {withCredentials: true}).then((res) => {
+    axios.get(`${URL}/api/logout`, {withCredentials: true}).then((res) => {
         // Handle successful logout
         sessionStorage.clear();
         localStorage.clear();
@@ -38,24 +39,15 @@ const AppRouter = () => {
                         <span style={{fontWeight:700}}>Data-fy</span>
                         <br/>
                         <p>
-                            Data-fy is a Spotify data visualization app based on your personal account. You can customize certain parameters of the data displayed such as time range, top artists, and top songs                        </p>
+                            Data-fy is a Spotify data visualization app based on your personal account. You can customize parameters such as time range, top artists, top songs, etc.                        </p>
                         <br/>
-                        {/*<p>*/}
-                        {/*    TEMP: Logo creates a music festival graphic based on your most listened-to Spotify artists. You can customize your graphic by changing the time range of your top artists, selecting a custom style, and by changing your festival's name.*/}
-                        {/*</p>*/}
-                        {/*<br/>*/}
-                        {/*<p>*/}
-                        {/*    TEMP: Your festival name is automatically generated from your Spotify username. If you do not want to display your username in the title, you can enable the "Hide Username" option.*/}
-                        {/*</p>*/}
-                        {/*<br/>*/}
                         <p>For information on how Data-fy handles your profile data, please refer to our <a
                             className="text-blue-500 underline cursor-pointer" target="_blank" href="/privacy">Privacy
                             Policy</a>
                         </p>
                         <br/>
-                        {/*<p>Made by <a target="_blank" rel="noreferrer" href="https://linktr.ee/valentinojosh" className="text-blue-500 underline">Josh Valentino</a></p>*/}
                         <p>Back end designed, programmed, and tested by <a target="_blank" rel="noreferrer" href="https://linktr.ee/valentinojosh" className="text-blue-500 underline">Josh Valentino</a></p>
-                        <p>Front end programmed and tested by <a target="_blank" rel="noreferrer" href="https://linktr.ee/valentinojosh" className="text-blue-500 underline">Josh Valentino</a>, mimicking the design of <a target="_blank" rel="noreferrer" href="https://www.instafest.app/" className="text-blue-500 underline">InstaFest</a></p>
+                        <p>Front end developed and tested by <a target="_blank" rel="noreferrer" href="https://linktr.ee/valentinojosh" className="text-blue-500 underline">Josh Valentino</a>, mimicking the design of <a target="_blank" rel="noreferrer" href="https://www.instafest.app/" className="text-blue-500 underline">InstaFest</a></p>
 
 
                         <div className="flex justify-center">
