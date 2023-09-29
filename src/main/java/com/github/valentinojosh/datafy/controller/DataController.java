@@ -46,20 +46,31 @@ public class DataController {
             .setRedirectUri(redirectUri)
             .build();
 
-    @GetMapping("/objectdata")
-    public SpotifyData handleObjectData() throws IOException {
-        return sd;
-    }
-
     @PreDestroy
     public void onDestroy() {
-        executorService.shutdown();  // Gracefully shut down the executor service
+        executorService.shutdown();
     }
 
     @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
-    @PostMapping("/data")
-    public ResponseEntity<Void> getData(HttpSession session) {
-        // Retrieve the access token and refresh token from the session
+    @GetMapping("/data")
+    public SpotifyData handleData(HttpSession session) throws IOException {
+        if (Boolean.TRUE.equals(session.getAttribute("isAuth"))){
+            if(sd.getMinutes() == 0){
+                try {
+                    processData(session);
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+            return sd;
+        }
+        else{
+            return null;
+        }
+    }
+
+    public void processData(HttpSession session){
         String accessToken = (String) session.getAttribute("accessToken");
         String refreshToken = (String) session.getAttribute("refreshToken");
         spotifyApi.setAccessToken(accessToken);
@@ -85,17 +96,7 @@ public class DataController {
         } catch (Exception e) {
             // Handle any exception thrown during the execution of the task
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-//        sd.setMinutes(0);
-//        initialX = 0;
-//        getTotalMinutes(initialX);
-//
-//        // Ms/60000 = Minutes per week * 52 weeks in a year = est minutes per year
-//        sd.setMinutes((sd.getMinutes()/60000)*52);
-
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     private void getTopArtists() {

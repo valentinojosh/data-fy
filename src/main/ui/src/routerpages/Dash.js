@@ -15,7 +15,6 @@ export default function Dash() {
     const [artistSelection, setArtistSelection] = useState('Short');
     const [trackSelection, setTrackSelection] = useState('Short');
     const [minutes, setMinutes] = useState(0);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     const handleDataSelection = (id) => {
         setDataSelection(id);
@@ -42,64 +41,48 @@ export default function Dash() {
         setMinutes(data['minutes'])
     }
 
-    //use effect to keep out of dash if not logged in
+    // Initial use effect upon load of dash
     useEffect(() => {
+        //api call to check auth status
         axios
-            .get("http://localhost:8080/api/dash")
+            .get("http://localhost:8080/api/dash",{ withCredentials: true })
             .then(res => {
-                if(res.data){
-                    window.location = "/"
+                let storedData = null;
+                try {
+                    storedData = JSON.parse(localStorage.getItem("objectData"));
+                } catch (error) {
+                    console.error("Error parsing objectData from localStorage:", error);
+                }
+
+                if(!storedData){
+                    //api call to fetch data
+                    axios
+                        .get("http://localhost:8080/api/data",{ withCredentials: true })
+                        .then(res => {
+                            localStorage.setItem("objectData", JSON.stringify(res.data));
+                            console.log(res.data)
+                            handleObjectData(res.data);
+                        })
+                        .catch((error) => {
+                            console.log("error in getting object data")
+                            console.error(error)
+                        })
+                }
+                else{
+                    console.log(storedData);
+                    handleObjectData(storedData);
                 }
             })
-            .catch(() => {
-                window.location = "/"
-            })
-    },[])
-
-    useEffect(() => {
-        if(sessionStorage.getItem("objectData") == null){
-        axios
-            .post("http://localhost:8080/api/data", {},{ withCredentials: true })
-            .then(() => {
-                setIsAuthenticated(true);
-                sessionStorage.setItem("authStatus", "set");
-            })
             .catch((error) => {
-                console.log("error in getting base data - use effect Dash")
-                console.error(error)
+                if (error.response && error.response.status === 401) {
+                    window.location = "/"; // Redirect to login
+                }
             })
-        }
-        else if (sessionStorage.getItem("authStatus") === "set"){
-            setIsAuthenticated(true);
-        }
     },[])
-
-    //use effect to get spotify object data upon initial load
-    //mighte need to check timing on this as the data might not be ready by the time of redirect?
-    useEffect(() => {
-        if(isAuthenticated && sessionStorage.getItem("objectData") == null) {
-            axios
-                .get("http://localhost:8080/api/objectdata")
-                .then(res => {
-                    sessionStorage.setItem("objectData", JSON.stringify(res.data));
-                    console.log(res.data)
-                    handleObjectData(res.data);
-                })
-                .catch((error) => {
-                    console.log("error in getting object data - use effect TempDash")
-                    console.error(error)
-                })
-        }
-        else if (isAuthenticated && sessionStorage.getItem("objectData") != null){
-            const data = JSON.parse(sessionStorage.getItem("objectData"));
-            console.log(data);
-            handleObjectData(data);
-        }
-    },[isAuthenticated])
 
     return  (
         <div>
-            {genres.length === 0 ?
+            {!localStorage.getItem("objectData") ?
                 <div className="loading-container"><div className="customize">Loading...</div></div>:
                 <div className="content-container">
                     <div className="left-content">

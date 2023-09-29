@@ -1,12 +1,15 @@
 import React from 'react'
 import axios from "axios";
+const URL = process.env.REACT_APP_URL;
 
 const handleLoginButtonClick = () => {
-    axios.get('http://localhost:8080/api/login').then((res) => {
-        // Handle successful login
+    axios.get(`${URL}/api/login`).then((res) => {
+        // Set window to Spotify Auth Request URI
+        console.log("hi");
+        console.log(res.data);
         window.location.replace(res.data);
     }).catch((error) => {
-            // Handle login error
+        // Handle login error
         if (error.response) {
             window.location.replace('/error?message=' + encodeURIComponent(error.response.data.message));
         } else if (error.request) {
@@ -36,7 +39,7 @@ export default function Login() {
                 <div className="content-container justify-center" style={{ display: 'flex', flexDirection: 'column' }}>
                         <div className="text-center">
                             <div className="sign-in-head">
-                                Create a data lineup from your top artists.
+                                Visualize your Spotify data
                             </div>
                             <div className="query-selection">
                                 <div className="sign-in">
