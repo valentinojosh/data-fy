@@ -3,6 +3,7 @@
 Java/React full-stack app, analyzes Spotify listening history. MVC design pattern. Managed with maven, utilizing Spring Boot, JGit, REST architecture, the Spotify API, and build tested with Docker.
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/1f537465-137b-44a5-860e-50a5a3cbad36/deploy-status)](https://app.netlify.com/sites/data-fy/deploys)
+[![button](https://github.com/buttons/github-buttons/workflows/build/badge.svg)](https://data-fy.netlify.app/)
 
 ## Description
 
