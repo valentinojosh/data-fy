@@ -39,7 +39,7 @@ export default function Login() {
                 <div className="content-container justify-center" style={{ display: 'flex', flexDirection: 'column' }}>
                         <div className="text-center">
                             <div className="sign-in-head">
-                                Create a data lineup from your top artists.
+                                Visualize your Spotify data
                             </div>
                             <div className="query-selection">
                                 <div className="sign-in">

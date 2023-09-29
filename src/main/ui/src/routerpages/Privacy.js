@@ -21,7 +21,7 @@ export default function Privacy() {
                                                          className="text-blue-500 underline">here</a></p>
 
                     <br/>
-                    <p>Please note: this is a personal project, not at all monetized, and is not well optimized for security. Use at your own discretion. To see a demo or check out the code, check out my <a target="_blank" rel="noreferrer" href="https://joshvalentino.com/projects"
+                    <p>Please note: this is a personal project, not at all monetized, and is rigoursly optimized for security. Use at your own discretion. To see a demo or check out the code, check out my <a target="_blank" rel="noreferrer" href="https://joshvalentino.com/projects"
                                                                                                                                                                                                                className="text-blue-500 underline">portfolio</a>!</p>
                 </div>
 
