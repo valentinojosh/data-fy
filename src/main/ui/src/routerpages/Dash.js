@@ -45,7 +45,7 @@ export default function Dash() {
     useEffect(() => {
         //api call to check auth status
         axios
-            .get("http://localhost:8080/api/dash",{ withCredentials: true })
+            .get("http://https://data-fy.uc.r.appspot.com/api/dash",{ withCredentials: true })
             .then(res => {
                 let storedData = null;
                 try {
@@ -57,7 +57,7 @@ export default function Dash() {
                 if(!storedData){
                     //api call to fetch data
                     axios
-                        .get("http://localhost:8080/api/data",{ withCredentials: true })
+                        .get("http://https://data-fy.uc.r.appspot.com/api/data",{ withCredentials: true })
                         .then(res => {
                             localStorage.setItem("objectData", JSON.stringify(res.data));
                             console.log(res.data)

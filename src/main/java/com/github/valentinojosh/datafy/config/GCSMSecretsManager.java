@@ -9,7 +9,7 @@ public class GCSMSecretsManager implements SecretsManager {
     public String fetchSecret(String secretName) {
         // Fetch secret using GCSM SDK
         try (SecretManagerServiceClient client = SecretManagerServiceClient.create()) {
-            SecretVersionName secretVersionName = SecretVersionName.of("[YOUR_PROJECT_ID]", secretName, "[SECRET_VERSION]");
+            SecretVersionName secretVersionName = SecretVersionName.of("data-fy", secretName, "latest");
             return client.accessSecretVersion(secretVersionName).getPayload().getData().toStringUtf8();
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch secret: " + secretName, e);

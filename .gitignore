@@ -35,3 +35,4 @@ build/
 # Secrets #
 .env
 .env.production
+data-fy-29787fbbb1a8.json
