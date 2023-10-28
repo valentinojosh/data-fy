@@ -1,0 +1,6 @@
+*.log
+*.yml
+*.properties
+*.json
+.DS_Store
+*.md

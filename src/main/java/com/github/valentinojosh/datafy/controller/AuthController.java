@@ -1,9 +1,11 @@
 package com.github.valentinojosh.datafy.controller;
+import com.github.valentinojosh.datafy.config.SecretsManager;
 import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.apache.hc.core5.http.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,17 +22,38 @@ import java.net.URI;
 @RequestMapping("/api")
 @CrossOrigin()
 public class AuthController {
-    private static final String clientId = Dotenv.load().get("CLIENT_ID");
-    private static final String clientSecret = Dotenv.load().get("CLIENT_SECRET");
-    private static final String uri = Dotenv.load().get("URI");
-    private static final String redirect = Dotenv.load().get("REDIRECT");
-    private static final URI redirectUri = SpotifyHttpManager.makeUri(uri);
+    private String clientId;
+    private String clientSecret;
+    private String uri;
+    private String redirect;
+    private URI redirectUri;
+    private SpotifyApi spotifyApi;
 
-    private static final SpotifyApi spotifyApi = new SpotifyApi.Builder()
-            .setClientId(clientId)
-            .setClientSecret(clientSecret)
-            .setRedirectUri(redirectUri)
-            .build();
+    @Autowired
+    public AuthController(SecretsManager secretsManager) {
+        // Load secrets into instance variables
+        clientId = secretsManager.fetchSecret("CLIENT_ID");
+        clientSecret = secretsManager.fetchSecret("CLIENT_SECRET");
+        uri = secretsManager.fetchSecret("URI");
+        redirect = secretsManager.fetchSecret("REDIRECT");
+        redirectUri = SpotifyHttpManager.makeUri(uri);
+
+        spotifyApi = new SpotifyApi.Builder()
+                .setClientId(clientId)
+                .setClientSecret(clientSecret)
+                .setRedirectUri(redirectUri)
+                .build();
+    }
+
+    public URI getRedirectUri() {
+        return redirectUri;
+    }
+
+    public SpotifyApi getSpotifyApi() {
+        return spotifyApi;
+    }
+
+
 
     @GetMapping("/login")
     @ResponseBody
