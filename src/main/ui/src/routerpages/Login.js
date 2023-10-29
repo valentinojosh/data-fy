@@ -5,9 +5,13 @@ const URL = process.env.REACT_APP_URL;
 const handleLoginButtonClick = () => {
     axios.get(`${URL}/api/login`).then((res) => {
         // Set window to Spotify Auth Request URI
+
+        if (res.status === 304) {
+            window.location.replace('/error?message=304');
+        } else {
+            window.location.replace(res.data);
+        }
         console.log("hi");
-        console.log(res.data);
-        window.location.replace(res.data);
     }).catch((error) => {
         // Handle login error
         if (error.response) {
