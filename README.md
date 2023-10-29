@@ -35,11 +35,11 @@ The backend is structured around three primary controllers:
 * httpclient 4.5.14
 * dotenv-java 2.3.2
 
-### Installing
+### Commands
 
-* Fork or clone this repository
-* npm start for front end
-* run java for server
+* docker build --no-cache -t image-name .
+* docker run \ -e "VARIABLE=value" \ -p port:port image-name
+* mvn clean package -Dspring.profiles.active=production appengine:deploy
 
 ## Author
 
@@ -53,3 +53,8 @@ The backend is structured around three primary controllers:
     * Fully fucntional app in testing env
 * 1.2.0
     * Improved API routes, slightly improved security
+* 1.3.0
+    * Further improved API routes, FE calls simplified and secured, enhanced caching, implemented reduction in un-necesary calls to api
+* 1.4.0
+    * Combatibility with Google App Engine, Secrets Manager, etc.
+    * First production build
