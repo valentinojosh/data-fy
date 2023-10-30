@@ -23,12 +23,19 @@ const handleLogoutButtonClick = () => {
     });
 }
 
+
 const AppRouter = () => {
     const [modal, setModal] = useState(false);
 
     const toggleModal = () => {
         setModal(!modal);
     };
+
+    //const navigate = useNavigate();
+    function navigateHome() {
+        window.location.replace('/');
+        //navigate('/');
+    }
 
     return (
         <div>
@@ -72,7 +79,9 @@ const AppRouter = () => {
                                 </svg>
                             </button>
 
-                            <div className="flex-1 text-center font-['Ganache'] logo-text">Data-fy</div>
+                            <div className="flex-1 text-center font-['Ganache'] logo-text">
+                                <span onClick={navigateHome} style={{ cursor: 'pointer' }}>Data-fy</span>
+                            </div>
 
                             {((window.location.pathname !== "/") && (window.location.pathname !== "/privacy")) && (
                             <button className="logout-button" onClick={handleLogoutButtonClick}>

@@ -73,7 +73,7 @@ public class DataController {
         executorService.shutdown();
     }
 
-    @CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @CrossOrigin(origins = "https://data-fy.netlify.app", allowCredentials = "true")
     @GetMapping("/data")
     public SpotifyData handleData(HttpSession session) throws IOException {
         if (Boolean.TRUE.equals(session.getAttribute("isAuth"))){
