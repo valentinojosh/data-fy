@@ -50,12 +50,16 @@ export default function Dash() {
                 let storedData = null;
                 try {
                     storedData = JSON.parse(localStorage.getItem("objectData"));
+                    console.log("data:");
+                    console.log(storedData);
                 } catch (error) {
                     console.error("Error parsing objectData from localStorage:", error);
                 }
 
+                // checks if the data is present in local storage, preventing unnecessary API calls
                 if(!storedData){
                     //api call to fetch data
+                    console.log("data is null?");
                     axios
                         .get("http://https://data-fy.uc.r.appspot.com/api/data",{ withCredentials: true })
                         .then(res => {
