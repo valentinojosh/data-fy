@@ -71,7 +71,7 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/auth/")
+    @GetMapping("/auth")
     public void handleAuthCode(@RequestParam(value = "code", required = false) String userCode, @RequestParam(value = "error", required = false) String error, HttpServletResponse response, HttpServletRequest request, HttpSession session) throws IOException {
 
         if (error != null) {
@@ -111,7 +111,8 @@ public class AuthController {
         }
     }
 
-    //@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+
+    @CrossOrigin(origins = "https://data-fy.netlify.app", allowCredentials = "true")
     @GetMapping("/dash")
     public ResponseEntity<Object> handleDash(HttpSession session) throws IOException {
         if (Boolean.TRUE.equals(session.getAttribute("isAuth"))) {
@@ -120,7 +121,7 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
-    //@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+    @CrossOrigin(origins = "https://data-fy.netlify.app", allowCredentials = "true")
     @GetMapping("/logout")
     public String userLogout(HttpSession session){
         triggerLogout(session);
