@@ -111,6 +111,7 @@ public class AuthController {
         }
     }
 
+
     @CrossOrigin(origins = "https://data-fy.netlify.app", allowCredentials = "true")
     @GetMapping("/dash")
     public ResponseEntity<Object> handleDash(HttpSession session) throws IOException {
