@@ -15,6 +15,7 @@ export default function Dash() {
     const [artistSelection, setArtistSelection] = useState('Short');
     const [trackSelection, setTrackSelection] = useState('Short');
     const [minutes, setMinutes] = useState(0);
+    const URL = process.env.REACT_APP_URL;
 
     const handleDataSelection = (id) => {
         setDataSelection(id);
@@ -45,7 +46,7 @@ export default function Dash() {
     useEffect(() => {
         //api call to check auth status
         axios
-            .get("http://https://data-fy.uc.r.appspot.com/api/dash",{ withCredentials: true })
+            .get(`${URL}/api/dash`,{ withCredentials: true })
             .then(res => {
                 let storedData = null;
                 try {
@@ -61,7 +62,7 @@ export default function Dash() {
                     //api call to fetch data
                     console.log("data is null?");
                     axios
-                        .get("http://https://data-fy.uc.r.appspot.com/api/data",{ withCredentials: true })
+                        .get(`${URL}/api/data`,{ withCredentials: true })
                         .then(res => {
                             localStorage.setItem("objectData", JSON.stringify(res.data));
                             console.log(res.data)
