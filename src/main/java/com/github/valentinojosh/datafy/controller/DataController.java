@@ -1,14 +1,9 @@
 package com.github.valentinojosh.datafy.controller;
-
 import com.github.valentinojosh.datafy.config.SecretsManager;
 import com.github.valentinojosh.datafy.object.SpotifyData;
-import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.annotation.PreDestroy;
-import jakarta.servlet.http.HttpSession;
 import org.apache.hc.core5.http.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import se.michaelthelin.spotify.SpotifyApi;
 import se.michaelthelin.spotify.SpotifyHttpManager;
@@ -33,20 +28,17 @@ import java.util.stream.Collectors;
 @RequestMapping("/api")
 @CrossOrigin()
 public class DataController {
-    private String clientId;
-    private String clientSecret;
-    private String uri;
-    private String redirect;
-    private URI redirectUri;
-    private SpotifyApi spotifyApi;
+    private final URI redirectUri;
+    private final SpotifyApi spotifyApi;
+    private final String origin = "https://localhost:3000";
+
 
     @Autowired
     public DataController(SecretsManager secretsManager) {
         // Load secrets into instance variables
-        clientId = secretsManager.fetchSecret("CLIENT_ID");
-        clientSecret = secretsManager.fetchSecret("CLIENT_SECRET");
-        uri = secretsManager.fetchSecret("URI");
-        redirect = secretsManager.fetchSecret("REDIRECT");
+        String clientId = secretsManager.fetchSecret("CLIENT_ID");
+        String clientSecret = secretsManager.fetchSecret("CLIENT_SECRET");
+        String uri = secretsManager.fetchSecret("URI");
         redirectUri = SpotifyHttpManager.makeUri(uri);
 
         spotifyApi = new SpotifyApi.Builder()
@@ -73,13 +65,19 @@ public class DataController {
         executorService.shutdown();
     }
 
-    @CrossOrigin(origins = "https://data-fy.netlify.app", allowCredentials = "true")
+
+    @CrossOrigin(origins = origin, allowCredentials = "true")
     @GetMapping("/data")
-    public SpotifyData handleData(HttpSession session) throws IOException {
-        if (Boolean.TRUE.equals(session.getAttribute("isAuth"))){
+    public SpotifyData handleData(@RequestHeader("Authorization") String authorizationHeader) {
+        String accessToken = null;
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            accessToken = authorizationHeader.substring(7).replace("\"", "");;
+        }
+
+        if (accessToken != null){
             if(sd.getMinutes() == 0){
                 try {
-                    processData(session);
+                    processData(accessToken);
                 }
                 catch (Exception e){
                     e.printStackTrace();
@@ -92,11 +90,8 @@ public class DataController {
         }
     }
 
-    public void processData(HttpSession session){
-        String accessToken = (String) session.getAttribute("accessToken");
-        String refreshToken = (String) session.getAttribute("refreshToken");
+    public void processData(String accessToken){
         spotifyApi.setAccessToken(accessToken);
-        spotifyApi.setRefreshToken(refreshToken);
 
         //Invoke separate thread for getting minutes as it is a recursive call and takes the longest of all the methods
         Future<?> future = executorService.submit(() -> {
