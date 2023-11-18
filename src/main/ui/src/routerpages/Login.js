@@ -1,20 +1,28 @@
-import React from 'react'
+import React, {useState} from 'react'
 import axios from "axios";
 const URL = process.env.REACT_APP_URL;
 
-const handleLoginButtonClick = () => {
+const handleLoginButtonClick = (setIsLoading, isLoading) => {
+    if (isLoading) return;
+
+    setIsLoading(true);
     const storedData = localStorage.getItem('objectData');
     if (storedData){
+        setIsLoading(false);
         window.location = "/dash";
+        return;
     }
 
     axios.get(`${URL}/api/login`).then((res) => {
+        setIsLoading(false);
         if (res.status === 304) {
             window.location.replace('/error?message=304');
         } else {
             window.location.replace(res.data);
         }
     }).catch((error) => {
+        setIsLoading(false);
+
         // Handle login error
         if (error.response) {
             window.location.replace('/error?message=' + encodeURIComponent(error.response.data.message));
@@ -28,9 +36,9 @@ const handleLoginButtonClick = () => {
     });
 }
 
-const LoginButton = () => {
+const LoginButton = ({ setIsLoading, isLoading }) => {
     return (
-        <button className="btn btn-success btn-lg s-green" onClick={handleLoginButtonClick}>
+        <button className="btn btn-success btn-lg s-green" onClick={() => handleLoginButtonClick(setIsLoading, isLoading)} disabled={isLoading}>
             Sign in with
             <br/>
             Spotify
@@ -39,6 +47,8 @@ const LoginButton = () => {
 }
 
 export default function Login() {
+    const [isLoading, setIsLoading] = useState(false);
+
     return(
         <div>
             <div>
@@ -51,11 +61,12 @@ export default function Login() {
                                 <div className="sign-in">
                                     Sign in to get started.
                                 </div>
-                                <LoginButton></LoginButton>
+                                <LoginButton setIsLoading={setIsLoading} isLoading={isLoading}/>
                                 <div className="sign-in-policy">
-                                    Read our <a className="text-blue-500 underline cursor-pointer" target="_blank"
+                                    Please note: to limit Google Cloud costs the server is configured for low performance and may not always be up. Also, read our <a className="text-blue-500 underline cursor-pointer" target="_blank"
                                                 href="/privacy">Privacy Policy</a>.
                                 </div>
+
                             </div>
                         </div>
                     </div>

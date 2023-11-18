@@ -17,11 +17,10 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "https://localhost:3000")
+@CrossOrigin(origins = "https://data-fy.netlify.app/")
 public class AuthController {
     private final URI redirectUri;
     private final SpotifyApi spotifyApi;
-    private final String origin = "https://localhost:3000";
 
     @Autowired
     public AuthController(SecretsManager secretsManager) {

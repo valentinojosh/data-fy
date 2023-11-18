@@ -7,11 +7,9 @@ import SpotifyLogo from "./Spotify_Logo_RGB_Black.png"
 import React, {useState} from "react";
 import {Container, Navbar} from "react-bootstrap";
 import "./components/modal/modal.css"
-import axios from "axios";
 import Privacy from "./routerpages/Privacy";
 import Error from "./routerpages/Error";
 import AuthCallbackComponent from "./routerpages/AuthCallbackComponent";
-const URL = process.env.REACT_APP_URL;
 
 const handleLogoutButtonClick = () => {
     sessionStorage.clear();
@@ -27,10 +25,8 @@ const AppRouter = () => {
         setModal(!modal);
     };
 
-    //const navigate = useNavigate();
     function navigateHome() {
         window.location.replace('/');
-        //navigate('/');
     }
 
     return (
