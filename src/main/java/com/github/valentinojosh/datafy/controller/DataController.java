@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 public class DataController {
     private final URI redirectUri;
     private final SpotifyApi spotifyApi;
-    private final String origin = "https://localhost:3000";
+    private final String origin = "https://data-fy.netlify.app/";
 
 
     @Autowired
