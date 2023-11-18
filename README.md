@@ -58,3 +58,6 @@ The backend is structured around three primary controllers:
 * 1.4.0
     * Combatibility with Google App Engine, Secrets Manager, etc.
     * First production build
+ * 1.5.0
+    * Refactored project to be completely stateless on the backend
+    * Added more redirects and logout functionality to client side
