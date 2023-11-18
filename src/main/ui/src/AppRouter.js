@@ -10,17 +10,13 @@ import "./components/modal/modal.css"
 import axios from "axios";
 import Privacy from "./routerpages/Privacy";
 import Error from "./routerpages/Error";
+import AuthCallbackComponent from "./routerpages/AuthCallbackComponent";
 const URL = process.env.REACT_APP_URL;
 
 const handleLogoutButtonClick = () => {
-    axios.get(`${URL}/api/logout`, {withCredentials: true}).then((res) => {
-        // Handle successful logout
-        sessionStorage.clear();
-        localStorage.clear();
-        window.location.replace(res.data);
-    }).catch((error) => {
-        // Handle login error
-    });
+    sessionStorage.clear();
+    localStorage.clear();
+    window.location.replace('/');
 }
 
 
@@ -101,6 +97,7 @@ const AppRouter = () => {
                     <Route path="/" element={<Login/>} />
                     <Route path="/dash" element={<Dash/>}/>
                     <Route path="/privacy" element={<Privacy/>}/>
+                    <Route path="/auth-callback" element={<AuthCallbackComponent/>}/>
                     <Route path="/error" element={<Error/>}/>
                 </Routes>
 
