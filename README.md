@@ -48,9 +48,9 @@ The backend is structured around three primary controllers:
 ## Version History
 
 * 1.0.0
-    * Inital release
+    * Initial release
 * 1.1.0
-    * Fully fucntional app in testing env
+    * Base functionality in local env
 * 1.2.0
     * Improved API routes, slightly improved security
 * 1.3.0
