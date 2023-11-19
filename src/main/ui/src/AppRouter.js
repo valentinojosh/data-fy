@@ -95,6 +95,7 @@ const AppRouter = () => {
                     <Route path="/privacy" element={<Privacy/>}/>
                     <Route path="/auth-callback" element={<AuthCallbackComponent/>}/>
                     <Route path="/error" element={<Error/>}/>
+                    <Route path="/*" element={<Error/>}/>
                 </Routes>
 
                 <div className="footer">

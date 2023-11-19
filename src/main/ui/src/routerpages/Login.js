@@ -15,6 +15,7 @@ const handleLoginButtonClick = (setIsLoading, isLoading) => {
 
     axios.get(`${URL}/api/login`).then((res) => {
         setIsLoading(false);
+
         if (res.status === 304) {
             window.location.replace('/error?message=304');
         } else {
@@ -39,9 +40,13 @@ const handleLoginButtonClick = (setIsLoading, isLoading) => {
 const LoginButton = ({ setIsLoading, isLoading }) => {
     return (
         <button className="btn btn-success btn-lg s-green" onClick={() => handleLoginButtonClick(setIsLoading, isLoading)} disabled={isLoading}>
-            Sign in with
-            <br/>
-            Spotify
+            {isLoading ? "Loading..." : (
+                <>
+                    Sign in with
+                    <br/>
+                    Spotify
+                </>
+            )}
         </button>
     );
 }

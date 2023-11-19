@@ -3,7 +3,7 @@ import {useSearchParams} from "react-router-dom";
 
 export default function Error() {
     let [searchParams] = useSearchParams();
-    let message = searchParams.get('message');
+    let message = searchParams.get('message') || "Unknown route";
 
     return  (
         <div>
