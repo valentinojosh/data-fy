@@ -14,7 +14,13 @@ public class SecretsManagerConfig {
 
     @Bean
     @Profile("development")
-    public SecretsManager mockSecretsManager() {
-        return new MockSecretsManager();
+    public SecretsManager localSecretsManager() {
+        return new LocalSecretsManager();
+    }
+
+    @Bean
+    @Profile("docker")
+    public SecretsManager dockerSecretsManager() {
+        return new DockerSecretsManager();
     }
 }
