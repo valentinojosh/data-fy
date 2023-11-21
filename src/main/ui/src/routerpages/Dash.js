@@ -34,6 +34,12 @@ export default function Dash() {
     }
 
     const handleObjectData = (data) => {
+        // Check if the data contains any null or 0 value
+        if (containsNullOrZero(data)) {
+            window.location = "/error?message=Error occurred in Spotify data. Account may not have enough data, missing data in certain locations, or other unknown issue.";
+            return;
+        }
+
         setObjectData(data)
         setArtists(data['artistsShort'])
         setGenres(data['topSixGenres'])
@@ -42,7 +48,27 @@ export default function Dash() {
         setMinutes(data['minutes'])
     }
 
+    function containsNullOrZero(data) {
+        for (let key in data) {
+            let value = data[key];
 
+            // Check for null or 0 values in primitive types
+            if (value === null || value === 0) {
+                return true;
+            }
+
+            // Check arrays for null or 0 length
+            if (Array.isArray(value) && (value.length === 0 || value.includes(null))) {
+                return true;
+            }
+
+            // Check objects/maps
+            if (typeof value === 'object' && (value === null || Object.keys(value).length === 0)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     // Initial use effect upon load of dash
     // Disabling dependency check because URL is constant and effect should only run on mount
@@ -86,47 +112,6 @@ export default function Dash() {
             console.error('Access token is not available.');
             // Handle the scenario where the access token is not available
         }
-
-
-        // //api call to check auth status
-        // axios
-        //     .get(`${URL}/api/dash`,{ withCredentials: true })
-        //     .then(res => {
-        //         let storedData = null;
-        //         try {
-        //             storedData = JSON.parse(localStorage.getItem("objectData"));
-        //             console.log("data:");
-        //             console.log(storedData);
-        //         } catch (error) {
-        //             console.error("Error parsing objectData from localStorage:", error);
-        //         }
-        //
-        //         // checks if the data is present in local storage, preventing unnecessary API calls
-        //         if(!storedData){
-        //             //api call to fetch data
-        //             console.log("data is null?");
-        //             axios
-        //                 .get(`${URL}/api/data`,{ withCredentials: true })
-        //                 .then(res => {
-        //                     localStorage.setItem("objectData", JSON.stringify(res.data));
-        //                     console.log(res.data)
-        //                     handleObjectData(res.data);
-        //                 })
-        //                 .catch((error) => {
-        //                     console.log("error in getting object data")
-        //                     console.error(error)
-        //                 })
-        //         }
-        //         else{
-        //             console.log(storedData);
-        //             handleObjectData(storedData);
-        //         }
-        //     })
-        //     .catch((error) => {
-        //         if (error.response && error.response.status === 401) {
-        //             window.location = "/"; // Redirect to login
-        //         }
-        //     })
         // eslint-disable-next-line
     },[])
 

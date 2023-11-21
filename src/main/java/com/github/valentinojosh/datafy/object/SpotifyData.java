@@ -21,7 +21,6 @@ public class SpotifyData {
     private Track[] recommendations;
     private float minutes;
 
-
     public SpotifyData(){
         // No-argument constructor
     }
