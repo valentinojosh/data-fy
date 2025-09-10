@@ -68,10 +68,8 @@ export default function Login() {
                                 </div>
                                 <LoginButton setIsLoading={setIsLoading} isLoading={isLoading}/>
                                 <div className="sign-in-policy">
-                                    Please note: to limit Google Cloud costs the server is configured for low performance and may not always be up. Also, read our <a className="text-blue-500 underline cursor-pointer" target="_blank"
-                                                href="/privacy">Privacy Policy</a>.
+                                    Please note: Google Cloud server is configured for cost-efficiency; on your first sign-in, loading may take up to 20 seconds while it initializes
                                 </div>
-
                             </div>
                         </div>
                     </div>
