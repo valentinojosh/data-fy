@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "//https://data-fy.netlify.app/", allowCredentials = "true")
+@CrossOrigin(origins = "https://data-fy.netlify.app/", allowCredentials = "true")
 public class DataController {
     private final SecretsManager secretsManager;
 
@@ -40,7 +40,7 @@ public class DataController {
     private SpotifyApi createSpotifyApi() {
         String clientSecret = secretsManager.fetchSecret("CLIENT_SECRET");
         String clientId = "1b24d7a17fea44f59005605f6cb96cf2";
-        URI redirectUri = SpotifyHttpManager.makeUri("//https://data-fy.netlify.app/auth-callback");
+        URI redirectUri = SpotifyHttpManager.makeUri("https://data-fy.netlify.app/auth-callback");
 
         return new SpotifyApi.Builder()
                 .setClientId(clientId)
