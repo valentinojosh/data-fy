@@ -13,9 +13,9 @@ At its core, the backend leverages Java and adheres to the MVC design pattern. A
 
 The backend is structured around three primary controllers:
 
-* Auth Controller: Manages the reception, verification, and local session storage of Spotify login credentials.
+* Auth Controller: Manages the reception and verification of the Spotify authorization token.
 
-* Data Controller: Accesses the stored session login credentials to make requests to the Spotify API. It fetches the requisite data and transforms it into insightful and intriguing content for the user. To enhance performance, especially with larger datasets, this controller employs multi-threading, allowing simultaneous processing of multiple data segments.
+* Data Controller: Utilizes the received login credentials (from the front end) to make requests to the Spotify API. It fetches the Spotify listening data and parses out the requisite data to be processed and related in meaningful ways. It is then sent to the front end to be transformed into insightful and intriguing content for the user. To enhance performance, especially with larger datasets, this controller employs multi-threading, allowing simultaneous processing of multiple data segments. In particular, getTotalMinutes, the function that is responsible for calculating the estimation of total minutes listened in the last year, can be extensive due to it being recursive. This function is designed as such becasue of the Spotify API limit of 50 tracks per call. Thus the function is recusviley called, each time requesting the next 50 tracks unill it reaches either one full week of listening, or the max the user's history goes.
 
 * Global Exception Controller: Provides a centralized error handling mechanism. It captures exceptions across all controllers and conveys the associated error messages to the frontend, ensuring the user remains informed.
 
@@ -48,9 +48,9 @@ The backend is structured around three primary controllers:
 ## Version History
 
 * 1.0.0
-    * Inital release
+    * Initial release
 * 1.1.0
-    * Fully fucntional app in testing env
+    * Base functionality in local env
 * 1.2.0
     * Improved API routes, slightly improved security
 * 1.3.0
@@ -58,3 +58,6 @@ The backend is structured around three primary controllers:
 * 1.4.0
     * Combatibility with Google App Engine, Secrets Manager, etc.
     * First production build
+ * 1.5.0
+    * Refactored project to be completely stateless on the backend
+    * Added more redirects and logout functionality to client side
