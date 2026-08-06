@@ -6,7 +6,6 @@ import "./components/modal/modal.css"
 import SpotifyLogo from "./Spotify_Logo_RGB_Black.png"
 import React, {useState} from "react";
 import {Container, Navbar} from "react-bootstrap";
-import "./components/modal/modal.css"
 import Privacy from "./routerpages/Privacy";
 import Error from "./routerpages/Error";
 import AuthCallbackComponent from "./routerpages/AuthCallbackComponent";
@@ -41,7 +40,7 @@ const AppRouter = () => {
                             Data-fy is a Spotify data visualization app based on your personal account. You can customize parameters such as time range, top artists, top songs, etc.                        </p>
                         <br/>
                         <p>For information on how Data-fy handles your profile data, please refer to our <a
-                            className="text-blue-500 underline cursor-pointer" target="_blank" href="/privacy">Privacy
+                            className="text-blue-500 underline cursor-pointer" target="_blank" rel="noreferrer" href="/privacy">Privacy
                             Policy</a>
                         </p>
                         <br/>

@@ -68,7 +68,7 @@ export default function Login() {
                                 </div>
                                 <LoginButton setIsLoading={setIsLoading} isLoading={isLoading}/>
                                 <div className="sign-in-policy">
-                                    Please note: Google Cloud server is configured for cost-efficiency; on your first sign-in, loading may take up to 20 seconds while it initializes
+                                    Data-fy is an archived personal project. A locally configured instance may take a few seconds to load Spotify data.
                                 </div>
                             </div>
                         </div>
