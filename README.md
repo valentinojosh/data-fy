@@ -2,7 +2,9 @@
 
 Data-fy is a full-stack Java and React application that turns a Spotify account's listening data into ranked artists, tracks, genres, recommendations, and a summary view.
 
-The project was developed in 2023 as a personal exploration of Spotify's Web API, OAuth, concurrent API processing, and a stateless frontend/backend boundary. Its original public deployment has been retired; this repository preserves the source, architecture, tests, and deployment configuration as a technical record.
+Data-fy was built in 2023 as a full-stack Spotify analytics project exploring the Web API, OAuth, concurrent API processing, and a stateless frontend/backend architecture. Its original public deployment has been retired; this repository preserves the source, architecture, tests, and deployment configuration as a technical record.
+
+![Data-fy desktop interface showing a radial visualization of the user's top Spotify genres.](docs/images/data-fy-top-genres.png)
 
 ## What it does
 
@@ -16,6 +18,14 @@ After the user authorizes the application, Data-fy:
 - presents the results as tables and charts, with time-range controls in the React dashboard.
 
 The listening-minutes value is intentionally labeled as an estimate. It is not Spotify play-count history: the implementation treats the durations of up to 350 long-term top tracks as a representative week and extrapolates that value across 52 weeks.
+
+## Interface
+
+These historical captures show the original deployed interface on desktop and at an iPhone 12-sized viewport. The mobile dashboard adapts the listening-minutes estimate, top artists, recommendations, and data-selection navigation to the narrower layout.
+
+<p align="center">
+  <img src="docs/images/data-fy-mobile-dashboard.png" width="280" alt="Data-fy mobile dashboard showing estimated listening minutes, top artists, recommended songs, and responsive navigation.">
+</p>
 
 ## Architecture
 
@@ -51,6 +61,7 @@ The longest-running calculation is submitted to a two-thread executor while the 
 - Recommendation seeding followed by full-track enrichment
 - One response model spanning multiple Spotify endpoint types
 - Profile-based secret providers for local, container, and historical cloud environments
+- Dedicated handling for Spotify OAuth failures such as `access_denied`, with a user-facing error route and recovery navigation
 - Centralized error routing and configurable CORS/callback origins
 - Deterministic backend and frontend tests that do not require Spotify credentials
 
@@ -151,7 +162,7 @@ The GitHub Actions workflow runs both suites and both builds without live Spotif
 
 ## Deployment history and project status
 
-The reachable repository history documents a Netlify-hosted React frontend and a Spring Boot backend prepared for Google App Engine Standard. App Engine descriptors, the App Engine Maven plugin, Google Cloud Secret Manager integration, Dockerfiles, and Netlify redirect artifacts remain as evidence of that deployment architecture. The first App Engine configuration appears in the October 2023 development history.
+The original application used a Netlify-hosted React frontend with a Spring Boot backend deployed through Google App Engine Standard. The repository retains the App Engine configuration, Google Cloud Secret Manager integration, Docker packaging, and Netlify SPA routing used by that deployment architecture.
 
 The original hosted deployment is retired, and no live URL is presented here. End-to-end OAuth behavior has not been re-certified against a live Spotify application during this repository-maintenance pass. Before any future redeployment, the OAuth flow and the historical frontend build toolchain should receive a dedicated security and dependency review.
 
