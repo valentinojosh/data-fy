@@ -4,6 +4,7 @@ import ArtistTable from "./ArtistTable";
 import Genres from "./Genres";
 import TrackTable from "./TrackTable";
 import Wrapped from "./Wrapped";
+import {containsNullOrZero} from "../utils/dataValidation";
 
 export default function Dash() {
     const [objectData, setObjectData] = useState([]);
@@ -46,28 +47,6 @@ export default function Dash() {
         setTracks(data['tracksShort'])
         setRecommendations(data['recommendations'])
         setMinutes(data['minutes'])
-    }
-
-    function containsNullOrZero(data) {
-        for (let key in data) {
-            let value = data[key];
-
-            // Check for null or 0 values in primitive types
-            if (value === null || value === 0) {
-                return true;
-            }
-
-            // Check arrays for null or 0 length
-            if (Array.isArray(value) && (value.length === 0 || value.includes(null))) {
-                return true;
-            }
-
-            // Check objects/maps
-            if (typeof value === 'object' && (value === null || Object.keys(value).length === 0)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     // Initial use effect upon load of dash

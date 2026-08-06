@@ -3,6 +3,22 @@
     {
       "name": "cors.origin",
       "type": "java.lang.String",
-      "description": "Description for cors.origin."
+      "description": "Allowed browser origin for API requests."
+    },
+    {
+      "name": "frontend.origin",
+      "type": "java.lang.String",
+      "description": "Frontend origin used for historical error redirects."
+    },
+    {
+      "name": "spotify.client-id",
+      "type": "java.lang.String",
+      "description": "Spotify application client ID."
+    },
+    {
+      "name": "spotify.redirect-uri",
+      "type": "java.lang.String",
+      "description": "OAuth callback URI registered with Spotify."
     }
-  ] }
+  ]
+}

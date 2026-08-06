@@ -1,12 +1,12 @@
 package com.github.valentinojosh.datafy.controller;
-import com.github.valentinojosh.datafy.config.SecretsManager;
+import com.github.valentinojosh.datafy.config.SpotifyApiFactory;
 import com.github.valentinojosh.datafy.object.SpotifyData;
+import com.github.valentinojosh.datafy.service.ListeningMinutesEstimator;
 import jakarta.annotation.PreDestroy;
 import org.apache.hc.core5.http.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import se.michaelthelin.spotify.SpotifyApi;
-import se.michaelthelin.spotify.SpotifyHttpManager;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.specification.*;
 import se.michaelthelin.spotify.requests.data.artists.GetSeveralArtistsRequest;
@@ -17,36 +17,25 @@ import se.michaelthelin.spotify.requests.data.player.GetCurrentUsersRecentlyPlay
 import se.michaelthelin.spotify.requests.data.tracks.GetSeveralTracksRequest;
 
 import java.io.IOException;
-import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
-//https://data-fy.netlify.app/
-//http://localhost:3000/
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "https://data-fy.netlify.app/", allowCredentials = "true")
+@CrossOrigin(origins = "${cors.origin}")
 public class DataController {
-    private final SecretsManager secretsManager;
+    private final SpotifyApiFactory spotifyApiFactory;
+    private final ListeningMinutesEstimator listeningMinutesEstimator;
 
     @Autowired
-    public DataController(SecretsManager secretsManager) {
-        this.secretsManager = secretsManager;
-    }
-
-    private SpotifyApi createSpotifyApi() {
-        String clientSecret = secretsManager.fetchSecret("CLIENT_SECRET");
-        String clientId = "1b24d7a17fea44f59005605f6cb96cf2";
-        URI redirectUri = SpotifyHttpManager.makeUri("https://data-fy.netlify.app/auth-callback");
-
-        return new SpotifyApi.Builder()
-                .setClientId(clientId)
-                .setClientSecret(clientSecret)
-                .setRedirectUri(redirectUri)
-                .build();
+    public DataController(
+            SpotifyApiFactory spotifyApiFactory,
+            ListeningMinutesEstimator listeningMinutesEstimator) {
+        this.spotifyApiFactory = spotifyApiFactory;
+        this.listeningMinutesEstimator = listeningMinutesEstimator;
     }
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(2); // 2 Threads
@@ -58,43 +47,60 @@ public class DataController {
 
     @GetMapping("/data")
     public SpotifyData handleData(@RequestHeader("Authorization") String authorizationHeader) {
-        SpotifyApi spotifyApi = createSpotifyApi();
-
-
         final SpotifyData sd = new SpotifyData();
-        String accessToken = null;
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            accessToken = authorizationHeader.substring(7).replace("\"", "");;
-        }
+        String accessToken = extractBearerToken(authorizationHeader).orElse(null);
 
-        if (accessToken != null){
-            if(sd.getMinutes() == 0){
+        if (accessToken != null) {
+            SpotifyApi spotifyApi = spotifyApiFactory.create();
+            if (sd.getMinutes() == 0) {
                 try {
                     processData(accessToken, sd, spotifyApi);
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
             return sd;
         }
-        else{
-            return null;
+        return null;
+    }
+
+    static Optional<String> extractBearerToken(String authorizationHeader) {
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            return Optional.empty();
         }
+
+        String token = authorizationHeader.substring(7).trim();
+        if (token.length() >= 2 && token.startsWith("\"") && token.endsWith("\"")) {
+            token = token.substring(1, token.length() - 1);
+        }
+        return token.isBlank() ? Optional.empty() : Optional.of(token);
     }
 
     public void processData(String accessToken, SpotifyData sd, SpotifyApi spotifyApi){
         spotifyApi.setAccessToken(accessToken);
 
-        //Invoke separate thread for getting minutes as it is a recursive call and takes the longest of all the methods
+        // Fetch the pages used by the minutes estimate while other Spotify requests run.
         //Note: In GCP Standard App Engine Environment, background threads have restrictions: including the thread can't outlive the request that spawned them.
         Future<?> future = executorService.submit(() -> {
-            sd.setMinutes(0);
-
-            getTotalMinutes(0, sd,0,spotifyApi);
-
-            // Ms/60000 = Minutes per week * 52 weeks in a year = est minutes per year
-            sd.setMinutes((sd.getMinutes()/60000)*52);
+            try {
+                sd.setMinutes(listeningMinutesEstimator.estimateAnnualMinutes((offset, limit) -> {
+                    Track[] tracks = spotifyApi.getUsersTopTracks()
+                            .time_range("long_term")
+                            .limit(limit)
+                            .offset(offset)
+                            .build()
+                            .execute()
+                            .getItems();
+                    int[] durations = new int[tracks.length];
+                    for (int index = 0; index < tracks.length; index++) {
+                        durations[index] = tracks[index] == null ? 0 : tracks[index].getDurationMs();
+                    }
+                    return durations;
+                }));
+            } catch (Exception e) {
+                sd.setMinutes(0);
+                System.out.println("Error estimating listening minutes: " + e.getMessage());
+            }
         });
 
         getTopArtists(sd,spotifyApi);
@@ -257,37 +263,11 @@ public class DataController {
         }
     }
 
-    private void getTotalMinutes(int offset, SpotifyData sd, int numTracksCounted, SpotifyApi spotifyApi) {
-        //350 tracks is one week (estimated) assuming maximal listening, capping the track search there
-        if(numTracksCounted >= 350){
+    private void getSpotifyDataRec(SpotifyData sd, SpotifyApi spotifyApi) {
+        if (sd.getTracksShort() == null || sd.getTracksShort().length == 0) {
+            sd.setRecommendations(new Track[0]);
             return;
         }
-
-        final GetUsersTopTracksRequest getUsersTopTracksRequestOne = spotifyApi.getUsersTopTracks()
-                .time_range("long_term")
-                .limit(50)
-                .offset(offset)
-                .build();
-        try{
-            final Track[] one = getUsersTopTracksRequestOne.execute().getItems();
-
-            float weekTotalMinutes = 0;
-            for(Track t : one){
-                weekTotalMinutes += t.getDurationMs();
-            }
-            sd.setMinutes(sd.getMinutes()+weekTotalMinutes);
-
-            if(one.length % 50 == 0 & one.length > 0){
-                numTracksCounted += 50;
-                getTotalMinutes(one.length-1,sd,numTracksCounted,spotifyApi);
-            }
-        } catch (Exception e){
-            sd.setMinutes(0);
-            System.out.println("Error getting top tracks: " + e.getMessage());
-        }
-    }
-
-    private void getSpotifyDataRec(SpotifyData sd, SpotifyApi spotifyApi) {
         List<String> trackIds = new ArrayList<>();
         for(Track t : sd.getTracksShort()){
             trackIds.add(t.getId());

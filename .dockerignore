@@ -1,6 +1,10 @@
+.git
+.github
+.env
+.env.*
+target
+src/main/ui/node_modules
+src/main/ui/build
 *.log
-*.yml
-*.properties
-*.json
 .DS_Store
 *.md
