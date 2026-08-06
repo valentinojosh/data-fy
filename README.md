@@ -60,7 +60,7 @@ The longest-running calculation is submitted to a two-thread executor while the 
 - Weighted domain transformation for genre ranking
 - Recommendation seeding followed by full-track enrichment
 - One response model spanning multiple Spotify endpoint types
-- Profile-based secret providers for local, container, and historical cloud environments
+- Profile-based secret providers for local, containerized, and Google Cloud environments
 - Dedicated handling for Spotify OAuth failures such as `access_denied`, with a user-facing error route and recovery navigation
 - Centralized error routing and configurable CORS/callback origins
 - Deterministic backend and frontend tests that do not require Spotify credentials
@@ -168,7 +168,7 @@ The original hosted deployment is retired, and no live URL is presented here. En
 
 ## Historical evolution
 
-The commit history shows the application progressing from an early local implementation into separate React and Spring components, Docker packaging, production-oriented API routes and caching, Google App Engine/Secret Manager support, and finally a stateless backend in the 1.5-era work. Those iterations remain in Git history rather than being rewritten as a new application.
+The commit history shows the application progressing from an early local implementation into separate React and Spring components, Docker packaging, production-oriented API routes and caching, Google App Engine/Secret Manager support, and eventually a stateless backend architecture.
 
 ## Author
 
